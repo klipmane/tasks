@@ -1,14 +1,23 @@
 from selenium import webdriver
-import eshop_def as df
+from selenium.webdriver.common.action_chains import ActionChains
+import eshop_func as func
+import eshop_data as data
+
+log_file = func.create_log_file()
+
 driver = webdriver.Chrome()
-eshop_url = "https://www.mall.cz/"
-category_url = eshop_url + df.product_categories["mobily"]
+eshop_url = data.eshop_urls["mall"]
+category_url = eshop_url + data.product_categories_mall["mobily"]
+
 driver.get(category_url)
+func.assert_title(driver, data.mall["category_title"], log_file)
 
-df.filter_expensive(driver)
+func.filter_expensive(driver)
+func.assert_sorting(driver, data.mall["most_expensive"], log_file)
 
-# for some reason the first selected product is not the most expensive one
-# even if I select 5 products, 4 of them will be from expensive list, but the first one not
-# unfortuantelly I was not able to handle this issue
-df.pick_up_products(driver, 2)
+func.pick_up_products(driver, 3)
+func.assert_cart(driver, ActionChains, 3, log_file)
+
+driver.close()
+
 
